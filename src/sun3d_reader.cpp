@@ -56,7 +56,7 @@ void ParseNames(const string &names,
     unsigned p = names.rfind("\"", pos);
     p++;
 
-    string n = names.substr(p, pos - p + 4);
+    string n = names.substr(p, pos - p + ext.size() - 1); // the -1 is for the additional "
     cout << "-";
     file_i->push_back(sun3d_dir + n);
     file_o->push_back(local_dir + n);
@@ -119,20 +119,24 @@ void DataFromServerToLocal(const string &sequence_name,
   string sun3d_image  = sun3d_path + "image/";
   string sun3d_depth  = sun3d_path + "depth/";
   string sun3d_pose   = sun3d_path + "extrinsics/";
+  string sun3d_annotation   = sun3d_path + "annotation/";
 
   string local_camera = local_dir  + "intrinsics.txt";
   string local_image  = local_dir  + "image/";
   string local_depth  = local_dir  + "depth/";
   string local_pose   = local_dir  + "extrinsics/";
+  string local_annotation   = local_dir  + "annotation/";
 
   string image_ext    = ".jpg";
   string depth_ext    = ".png";
   string pose_ext     = ".txt";
+  string annotation_ext     = ".json";
 
   SystemCommand( "mkdir -p " + local_dir);
   SystemCommand( "mkdir -p " + local_image);
   SystemCommand( "mkdir -p " + local_depth);
   SystemCommand( "mkdir -p " + local_pose);
+  SystemCommand( "mkdir -p " + local_annotation);
 
   CURL* curl;
   curl_global_init(CURL_GLOBAL_ALL);
@@ -142,6 +146,7 @@ void DataFromServerToLocal(const string &sequence_name,
   ServerToLocal(curl, sun3d_image, image_ext, local_image);
   ServerToLocal(curl, sun3d_depth, depth_ext, local_depth);
   ServerToLocal(curl, sun3d_pose,  pose_ext,  local_pose);
+  ServerToLocal(curl, sun3d_annotation,  annotation_ext,  local_annotation);
 
   curl_easy_cleanup(curl);
   curl_global_cleanup();
